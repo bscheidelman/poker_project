@@ -33,11 +33,21 @@ class Board:
 
 board = Board(deck[4], deck[5], deck[6], deck[7], deck [8])
 
-pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
+#pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
+
+c1 = Card("Club", 7)
+c2 = Card("Heart", 8)
+c3 = Card("Diamond", 7)
+c4 = Card("Club", 11)
+c5 = Card("Club", 6)
+c6 = Card("Spade", 7)
+c7 = Card("Heart", 7)
+
+pool = [c1, c2, c3, c4, c5, c6, c7]
 
 def best_hand(pool):
     ordered_pool = []
-    for x in range(7):
+    for x in range(len(pool)):
         cur = pool[0]
         for card in pool:
             if card.value > cur.value:
@@ -47,21 +57,39 @@ def best_hand(pool):
 
     for card in ordered_pool:
         print(card.value)
+    print("end of ordered pool")
 
 
     #Check Straight Flush
     for x in range(3):
-        for index in range(5):
-            continue_gate = True
-            if !(ordered_pool[x + index].value = ordered_pool[x + index + 1].value -1) or !(ordered_pool[x + index].suit = ordered_pool[x + index + 1].suit):
+        continue_gate = True
+        for index in range(4):
+            if (ordered_pool[x + index].value != ordered_pool[x + index + 1].value + 1) or (ordered_pool[x + index].suit != ordered_pool[x + index + 1].suit):
                 continue_gate = False
                 break
         if continue_gate:
             ret_pool = [ordered_pool[x], ordered_pool[x + 1], ordered_pool[x + 2], ordered_pool[x + 3], ordered_pool[x + 4]]
+
             return ret_pool
        
 
     #Check Four of a Kind
+    for x in range(4):
+        count = 0
+        cur = ordered_pool[x]
+        for index in range(7 - x):
+            if ordered_pool[x + index].value == cur.value:
+                count += 1
+        if count == 4:
+            ret_pool = []
+            gate = True
+            for card in ordered_pool:
+                if card.value != cur.value and gate:
+                    ret_pool.append(card)
+                    gate = False
+                if card.value == cur.value:
+                    ret_pool.append(card)
+            return ret_pool
 
     #Check Full House
 
