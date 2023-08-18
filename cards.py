@@ -53,11 +53,11 @@ def best_hand(pool):
     for x in range(3):
         for index in range(5):
             continue_gate = True
-            if !(pool[x + index].value = pool[x + index + 1].value -1) or !(pool[x + index].suit = pool[x + index + 1].suit):
+            if !(ordered_pool[x + index].value = ordered_pool[x + index + 1].value -1) or !(ordered_pool[x + index].suit = ordered_pool[x + index + 1].suit):
                 continue_gate = False
                 break
         if continue_gate:
-            ret_pool = [pool[x], pool[x + 1], pool[x + 2], pool[x + 3], pool[x + 4]]
+            ret_pool = [ordered_pool[x], ordered_pool[x + 1], ordered_pool[x + 2], ordered_pool[x + 3], ordered_pool[x + 4]]
             return ret_pool
        
 
