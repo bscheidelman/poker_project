@@ -39,9 +39,9 @@ c1 = Card("Club", 7)
 c2 = Card("Heart", 8)
 c3 = Card("Diamond", 7)
 c4 = Card("Club", 11)
-c5 = Card("Club", 6)
+c5 = Card("Club", 2)
 c6 = Card("Spade", 7)
-c7 = Card("Heart", 7)
+c7 = Card("Heart", 2)
 
 pool = [c1, c2, c3, c4, c5, c6, c7]
 
@@ -69,8 +69,7 @@ def best_hand(pool):
                 break
         if continue_gate:
             ret_pool = [ordered_pool[x], ordered_pool[x + 1], ordered_pool[x + 2], ordered_pool[x + 3], ordered_pool[x + 4]]
-
-            return ret_pool
+            #return ret_pool
        
 
     #Check Four of a Kind
@@ -89,15 +88,55 @@ def best_hand(pool):
                     gate = False
                 if card.value == cur.value:
                     ret_pool.append(card)
-            return ret_pool
+            #return ret_pool
 
     #Check Full House
+    for x in range(5):
+        count = 0
+        cur = ordered_pool[x]
+        for index in range(7-x):
+            if ordered_pool[x + index].value == cur.value:
+                count += 1
+        if count == 3:
+            old_cur = cur
+            for x in range(6):
+                count = 0
+                cur = ordered_pool[x]
+                if cur.value == old_cur.value:
+                    continue
+                for index in range(7-x):
+                    if ordered_pool[x + index].value == cur.value:
+                        count += 1
+                if count >= 2:
+                    ret_pool = []
+                    gate = 2
+                    for card in ordered_pool:
+                        if card.value == old_cur.value:
+                            ret_pool.append(card)
+                        if card.value == cur.value and gate > 0:
+                            ret_pool.append(card)
+                            gate -= 1
 
     #Check Flush
 
     #Check Straight
 
     #Check Three of a Kind
+    for x in range(5):
+        count = 0
+        cur = ordered_pool[x]
+        for index in range(7-x):
+            if ordered_pool[x + index].value == cur.value:
+                count += 1
+        if count == 3:
+            ret_pool = []
+            gate = 2
+            for card in ordered_pool:
+                if card.value != cur.value and gate > 0:
+                    ret_pool.append(card)
+                    gate -= 1
+                if card.value == cur.value:
+                    ret_pool.append(card)
 
     #Check Two Pair
 
