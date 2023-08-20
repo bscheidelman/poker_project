@@ -6,8 +6,8 @@ class Card:
         self.value = value
 
 
-suit_li = ["Diamond", "Heart", "Spade", "Club"]
-deck = [Card(suit, value) for value in range(1, 14) for suit in suit_li]
+suit_li = ["Diamonds", "Hearts", "Spades", "Clubs"]
+deck = [Card(suit, value) for value in range(2, 15) for suit in suit_li]
 
 def shuffle():
     random.shuffle(deck)
@@ -20,8 +20,8 @@ class Player:
         self.card_two = card_two
 
 
-player_one = Player(deck[0], deck[1])
-player_two = Player(deck[2], deck[3])
+#player_one = Player(deck[0], deck[1])
+#player_two = Player(deck[2], deck[3])
 
 class Board:
     def __init__(self, flop_one, flop_two, flop_three, turn, river):
@@ -31,19 +31,8 @@ class Board:
         self.turn = turn
         self.river = river
 
-board = Board(deck[4], deck[5], deck[6], deck[7], deck [8])
+#board = Board(deck[4], deck[5], deck[6], deck[7], deck [8])
 
-#pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
-
-c1 = Card("Club", 7)
-c2 = Card("Heart", 9)
-c3 = Card("Club", 5)
-c4 = Card("Club", 3)
-c5 = Card("Club", 1)
-c6 = Card("Spade", 2)
-c7 = Card("Spade", 10)
-
-pool = [c1, c2, c3, c4, c5, c6, c7]
 
 def best_hand(pool):
     ordered_pool = []
@@ -75,14 +64,16 @@ def best_hand(pool):
         for x in range(len(non_duplicate_pool) - 4):
             continue_gate = True
             for index in range(4):
-                if (non_duplicate_pool[x + index].value != non_duplicate_pool[x + index + 1].value + 1) or (non_duplicate_pool[x + index].suit != non_duplicate_pool[x + index + 1].suit):
+                if (non_duplicate_pool[x + index].suit != non_duplicate_pool[x + index + 1].suit):
                     continue_gate = False
                     break
+                elif (non_duplicate_pool[x + index].value != non_duplicate_pool[x + index + 1].value + 1):
+                    if (non_duplicate_pool[x + index].value != 2 or non_duplicate_pool[0].value != 14):
+                        continue_gate = False
+                        break
             if continue_gate:
                 ret_pool = [non_duplicate_pool[x], non_duplicate_pool[x + 1], non_duplicate_pool[x + 2], non_duplicate_pool[x + 3], non_duplicate_pool[x + 4]]
-                #return ret_pool
-                break
-       
+                return (8, ret_pool)
 
     #Check Four of a Kind
     for x in range(4):
@@ -96,12 +87,12 @@ def best_hand(pool):
             gate = True
             for card in ordered_pool:
                 if card.value != cur.value and gate:
-                    ret_pool.append(card)
+                    add_last = card
                     gate = False
                 if card.value == cur.value:
                     ret_pool.append(card)
-            #return ret_pool
-            break
+            ret_pool.append(add_last)
+            return (7, ret_pool)
 
     #Check Full House
     for x in range(5):
@@ -126,10 +117,11 @@ def best_hand(pool):
                     for card in ordered_pool:
                         if card.value == old_cur.value:
                             ret_pool.append(card)
+                    for card in ordered_pool:
                         if card.value == cur.value and gate > 0:
                             ret_pool.append(card)
                             gate -= 1
-            break
+                    return (6, ret_pool)
 
     #Check Flush
     for x in range(3):
@@ -145,7 +137,7 @@ def best_hand(pool):
                 if card.suit == cur.suit and count < 5:
                     count += 1
                     ret_pool.append(card)
-            break
+            return (5, ret_pool)
 
     #Check Straight
     if len(non_duplicate_pool) >= 5:
@@ -153,13 +145,14 @@ def best_hand(pool):
             continue_gate = True
             for index in range(4):
                 if (non_duplicate_pool[x + index].value != non_duplicate_pool[x + index + 1].value + 1):
-                    continue_gate = False
-                    break
+                    if (non_duplicate_pool[x + index].value != 2 or non_duplicate_pool[0].value != 14):
+                        continue_gate = False
+                        break
             if continue_gate:
                 ret_pool = []
                 for index in range(x, x + 5):
                     ret_pool.append(non_duplicate_pool[index])
-                break
+                return (4, ret_pool)
 
     #Check Three of a Kind
     for x in range(5):
@@ -172,12 +165,13 @@ def best_hand(pool):
             ret_pool = []
             gate = 2
             for card in ordered_pool:
+                if card.value == cur.value:
+                    ret_pool.append(card)
+            for card in ordered_pool:
                 if card.value != cur.value and gate > 0:
                     ret_pool.append(card)
                     gate -= 1
-                if card.value == cur.value:
-                    ret_pool.append(card)
-            break
+            return (3, ret_pool)
 
     #Check Two Pair
     for x in range(4):
@@ -198,15 +192,15 @@ def best_hand(pool):
                         count += 1
                 if count >= 2:
                     ret_pool = []
-                    gate = True
                     for card in ordered_pool:
                         if card.value == old_cur.value or card.value == cur.value:
                             ret_pool.append(card)
                             continue
-                        if gate:
+                    for card in ordered_pool:
+                        if card.value != old_cur.value and card.value != cur.value:
                             ret_pool.append(card)
-                            gate = False
-                    break
+                            break
+                    return (2, ret_pool)
 
     #Check Pair
     for x in range(6):
@@ -221,15 +215,165 @@ def best_hand(pool):
             for card in ordered_pool:
                 if card.value == cur.value:
                     ret_pool.append(card)
-                elif gate > 0:
+            for card in ordered_pool:
+                if gate > 0 and card.value != cur.value:
                     ret_pool.append(card)
                     gate -= 1
-            break
+            return (1, ret_pool)
 
 
     #Check High Card
     ret_pool = []
     for x in range(5):
         ret_pool.append(ordered_pool[x])
+    return (0, ret_pool)
 
-best_hand(pool)
+def check_winner(hand_one, hand_two):
+    # 1 == hand_one is better, 2 == hand_two is better, 0 == tie
+    if hand_one[0] > hand_two[0]:
+        return 1
+    elif hand_one[0] < hand_two[0]:
+        return 2
+    else:
+        if hand_one[0] == 8:
+            for x in range(5):
+                if hand_one[1][x].value >  hand_two[1][x].value:
+                    return 1
+                elif hand_one[1][x].value <  hand_two[1][x].value:
+                    return 2
+            return 0
+        elif hand_one[0] == 7:
+            if hand_one[1][0].value > hand_two[1][0].value:
+                return 1
+            elif hand_one[1][0].value < hand_two[1][0].value:
+                return 2
+            elif hand_one[1][4].value > hand_two[1][4].value:
+                return 1
+            elif hand_one[1][4].value < hand_two[1][4].value:
+                return 2
+            else:
+                return 0
+        elif hand_one[0] == 6:
+            if hand_one[1][0].value > hand_two[1][0].value:
+                return 1
+            elif hand_one[1][0].value < hand_two[1][0].value:
+                return 2
+            elif hand_one[1][4].value > hand_two[1][4].value:
+                return 1
+            elif hand_one[1][4].value < hand_two[1][4].value:
+                return 2
+            else:
+                return 0
+        elif hand_one[0] == 5:
+            for x in range(5):
+                if hand_one[1][x].value >  hand_two[1][x].value:
+                    return 1
+                elif hand_one[1][x].value <  hand_two[1][x].value:
+                    return 2
+            return 0
+        elif hand_one[0] == 4:
+            if hand_one[1][0].value > hand_two[1][0].value:
+                return 1
+            if hand_one[1][0].value < hand_two[1][0].value:
+                return 2
+            return 0
+        elif hand_one[0] == 3:
+            if hand_one[1][0].value > hand_two[1][0].value:
+                return 1
+            if hand_one[1][0].value < hand_two[1][0].value:
+                return 2
+            for x in range(3,5):
+                if hand_one[1][x].value >  hand_two[1][x].value:
+                    return 1
+                elif hand_one[1][x].value <  hand_two[1][x].value:
+                    return 2
+            return 0
+        elif hand_one[0] == 2:
+            if hand_one[1][0].value > hand_two[1][0].value:
+                return 1
+            if hand_one[1][0].value < hand_two[1][0].value:
+                return 2
+            if hand_one[1][2].value > hand_two[1][2].value:
+                return 1
+            if hand_one[1][2].value < hand_two[1][2].value:
+                return 2
+            if hand_one[1][4].value > hand_two[1][4].value:
+                return 1
+            if hand_one[1][4].value < hand_two[1][4].value:
+                return 2
+            return 0
+        elif hand_one[0] == 1:
+            if hand_one[1][0].value > hand_two[1][0].value:
+                return 1
+            if hand_one[1][0].value < hand_two[1][0].value:
+                return 2
+            for x in range(2,5):
+                if hand_one[1][x].value > hand_two[1][x].value:
+                    return 1
+                if hand_one[1][x].value < hand_two[1][x].value:
+                    return 2
+            return 0
+        else:
+            for x in range(5):
+                if hand_one[1][x].value > hand_two[1][x].value:
+                    return 1
+                if hand_one[1][x].value < hand_two[1][x].value:
+                    return 2
+            return 0
+
+
+
+
+
+def calculate_equity(c1, c2):
+    num_tied = num_won = num_lost = 0
+    
+
+    player_one = Player(c1, c2)
+
+    for card in deck:
+        if (card.value == player_one.card_one.value and card.suit == player_one.card_one.suit):
+            deck.remove(card)
+        elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
+            deck.remove(card)
+
+    print(len(deck))
+
+    count = 0
+
+    for combination in itertools.combinations(deck, 7):
+
+        player_two = Player(combination[5], combination[6])
+
+        board = Board(combination[0],combination[1],combination[2],combination[3],combination[4])
+
+        pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
+        pool_two = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two.card_one, player_two.card_two]
+
+        result = check_winner(best_hand(pool), best_hand(pool_two))
+
+        print(result)
+
+        if result == 0:
+            num_tied += 1
+        elif result == 1:
+            num_won += 1
+        else:
+            num_lost += 1
+
+        count += 1
+
+        if count >= 500000:
+            break
+
+
+    total = num_won + num_lost + num_tied
+    print("Num Wom:", 100*num_won/total, "%")
+    print("Num Lost:", 100*num_lost/total, "%")
+    print("Num Tied:", 100*num_tied/total, "%")
+    print(total)
+
+c1 = Card("Hearts", 10)
+c2 = Card("Hearts", 11)
+
+calculate_equity(c1, c2)
