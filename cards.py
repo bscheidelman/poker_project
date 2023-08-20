@@ -19,10 +19,6 @@ class Player:
         self.card_one = card_one
         self.card_two = card_two
 
-
-#player_one = Player(deck[0], deck[1])
-#player_two = Player(deck[2], deck[3])
-
 class Board:
     def __init__(self, flop_one, flop_two, flop_three, turn, river):
         self.flop_one = flop_one
@@ -30,9 +26,6 @@ class Board:
         self.flop_three = flop_three
         self.turn = turn
         self.river = river
-
-#board = Board(deck[4], deck[5], deck[6], deck[7], deck [8])
-
 
 def best_hand(pool):
     ordered_pool = []
@@ -325,7 +318,7 @@ def check_winner(hand_one, hand_two):
 
 
 
-def calculate_equity(c1, c2):
+def calculate_equity_preflop(c1, c2):
     num_tied = num_won = num_lost = 0
     
 
@@ -337,7 +330,6 @@ def calculate_equity(c1, c2):
         elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
             deck.remove(card)
 
-    print(len(deck))
 
     count = 0
 
@@ -352,7 +344,6 @@ def calculate_equity(c1, c2):
 
         result = check_winner(best_hand(pool), best_hand(pool_two))
 
-        print(result)
 
         if result == 0:
             num_tied += 1
@@ -368,12 +359,288 @@ def calculate_equity(c1, c2):
 
 
     total = num_won + num_lost + num_tied
-    print("Num Wom:", 100*num_won/total, "%")
-    print("Num Lost:", 100*num_lost/total, "%")
-    print("Num Tied:", 100*num_tied/total, "%")
-    print(total)
+    equity = num_won/total + 0.5 * num_tied/total
+    print ("~equity:", equity)
+    return equity
 
-c1 = Card("Hearts", 10)
-c2 = Card("Hearts", 11)
+def calculate_equity_flop(c1, c2, b1, b2, b3):
+    num_tied = num_won = num_lost = 0
+    
 
-calculate_equity(c1, c2)
+    player_one = Player(c1, c2)
+
+    for card in deck:
+        if (card.value == player_one.card_one.value and card.suit == player_one.card_one.suit):
+            deck.remove(card)
+        elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
+            deck.remove(card)
+
+  
+
+
+    count = 0
+
+    for combination in itertools.combinations(deck, 4):
+
+        player_two = Player(combination[2], combination[3])
+
+        board = Board(b1,b2,b3,combination[0],combination[1])
+
+        pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
+        pool_two = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two.card_one, player_two.card_two]
+
+        result = check_winner(best_hand(pool), best_hand(pool_two))
+
+
+        if result == 0:
+            num_tied += 1
+        elif result == 1:
+            num_won += 1
+        else:
+            num_lost += 1
+
+        count += 1
+
+        if count >= 500000:
+            break
+
+
+    total = num_won + num_lost + num_tied
+    equity = num_won/total + 0.5 * num_tied/total
+    print ("~equity:", equity)
+    return equity
+
+def calculate_equity_turn(c1, c2, b1, b2, b3, b4):
+    num_tied = num_won = num_lost = 0
+    
+
+    player_one = Player(c1, c2)
+
+    for card in deck:
+        if (card.value == player_one.card_one.value and card.suit == player_one.card_one.suit):
+            deck.remove(card)
+        elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
+            deck.remove(card)
+
+
+    count = 0
+
+    for combination in itertools.combinations(deck, 3):
+
+        player_two = Player(combination[1], combination[2])
+
+        board = Board(b1,b2,b3,b4,combination[0])
+
+        pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
+        pool_two = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two.card_one, player_two.card_two]
+
+        result = check_winner(best_hand(pool), best_hand(pool_two))
+
+
+        if result == 0:
+            num_tied += 1
+        elif result == 1:
+            num_won += 1
+        else:
+            num_lost += 1
+
+        count += 1
+
+        if count >= 500000:
+            break
+
+
+    total = num_won + num_lost + num_tied
+    equity = num_won/total + 0.5 * num_tied/total
+    print ("~equity:", equity)
+    return equity
+
+def calculate_equity_river(c1, c2, b1, b2, b3, b4, b5):
+    num_tied = num_won = num_lost = 0
+    
+
+    player_one = Player(c1, c2)
+
+    for card in deck:
+        if (card.value == player_one.card_one.value and card.suit == player_one.card_one.suit):
+            deck.remove(card)
+        elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
+            deck.remove(card)
+
+ 
+
+    count = 0
+
+    for combination in itertools.combinations(deck, 2):
+
+        player_two = Player(combination[0], combination[1])
+
+        board = Board(b1,b2,b3,b4,b5)
+
+        pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
+        pool_two = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two.card_one, player_two.card_two]
+
+        result = check_winner(best_hand(pool), best_hand(pool_two))
+
+       
+
+        if result == 0:
+            num_tied += 1
+        elif result == 1:
+            num_won += 1
+        else:
+            num_lost += 1
+
+        count += 1
+
+        if count >= 500000:
+            break
+
+
+    total = num_won + num_lost + num_tied
+    equity = num_won/total + 0.5 * num_tied/total
+    print ("~equity:", equity)
+    return equity
+
+
+def equity_bot_preflop(c1, c2):
+    if calculate_equity_preflop(c1, c2) > 0.5:
+        return 2.5
+    else:
+        return -1
+
+
+def equity_bot_flop(c1, c2, b1, b2, b3):
+    if calculate_equity_flop(c1, c2, b1, b2, b3)> 0.5:
+        return 2.5
+    else:
+        return -1
+
+    
+def equity_bot_turn(c1, c2, b1, b2, b3, b4):
+    if calculate_equity_turn(c1, c2, b1, b2, b3, b4) > 0.5:
+        return 2.5
+    else:
+        return -1
+
+
+def equity_bot_river(c1, c2, b1, b2, b3, b4, b5):
+    if calculate_equity_river(c1, c2, b1, b2, b3, b4, b5) > 0.5:
+        return 2.5
+    else:
+        return -1
+
+def random_bot():
+    choice = random.randrange(1,3)
+    if choice == 1:
+        return 2.5
+    if choice == 2:
+        return 0
+    if choice == 3:
+        return -1
+
+
+
+
+def play_hand(leads):
+    shuffle()
+
+    player_one = Player(deck[0], deck[1])
+    player_two = Player(deck[2], deck[3])
+    c1 = deck[0]
+    c2 = deck[1]
+
+
+    if leads % 2 == 0:
+        player_one_bet = 1
+        player_two_bet = 2
+
+        while (player_one_bet != player_two_bet):
+            
+            p1_decision = equity_bot_preflop(c1,c2)
+            if p1_decision >= 0:
+                player_one_bet = player_two_bet + p1_decision
+            else:
+                return -1 * player_one_bet
+
+            p2_decision = random_bot()
+            if p2_decision >= 0:
+                player_two_bet = player_one_bet + p2_decision
+            else:
+                return player_two_bet
+
+        board = Board(deck[4], deck[5], deck[6], deck[7], deck[8])
+
+        #Flop
+        p1_decision = equity_bot_flop(c1,c2, board.flop_one, board.flop_two, board.flop_three)
+        if p1_decision >= 0:
+            player_one_bet = player_two_bet + p1_decision
+        p2_decision = random_bot()
+        if p2_decision >= 0:
+            player_two_bet = player_one_bet + p2_decision
+        else:
+            return player_two_bet
+
+        while (player_one_bet != player_two_bet):
+            if p1_decision >= 0:
+                player_one_bet = player_two_bet + p1_decision
+            else:
+                return -player_one_bet
+            p2_decision = random_bot()
+            if p2_decision >= 0:
+                player_two_bet = player_one_bet + p2_decision
+            else:
+                return player_two_bet
+        #Turn
+        p1_decision = equity_bot_turn(c1,c2, board.flop_one, board.flop_two, board.flop_three, board.turn)
+        if p1_decision >= 0:
+            player_one_bet = player_two_bet + p1_decision
+        p2_decision = random_bot()
+        if p2_decision >= 0:
+            player_two_bet = player_one_bet + p2_decision
+        else:
+            return player_two_bet
+
+        while (player_one_bet != player_two_bet):
+            if p1_decision >= 0:
+                player_one_bet = player_two_bet + p1_decision
+            else:
+                return -player_one_bet
+            p2_decision = random_bot()
+            if p2_decision >= 0:
+                player_two_bet = player_one_bet + p2_decision
+            else:
+                return player_two_bet
+       
+        #River
+        p1_decision = equity_bot_river(c1,c2, board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
+        if p1_decision >= 0:
+            player_one_bet = player_two_bet + p1_decision
+        p2_decision = random_bot()
+        if p2_decision >= 0:
+            player_two_bet = player_one_bet + p2_decision
+        else:
+            return player_two_bet
+
+        while (player_one_bet != player_two_bet):
+            if p1_decision >= 0:
+                player_one_bet = player_two_bet + p1_decision
+            else:
+                return -1 * player_one_bet
+            p2_decision = random_bot()
+            if p2_decision >= 0:
+                player_two_bet = player_one_bet + p2_decision
+            else:
+                return player_two_bet
+
+        result = check_winner(best_hand([c1,c2,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river]),best_hand([deck[2],deck[3],board.flop_one, board.flop_two, board.flop_three, board.turn, board.river]))
+        if result == 1:
+            return player_two_bet
+        elif result == 2:
+            return -1 * player_one_bet
+        else:
+            return 0
+
+
+print(play_hand(2))
+
