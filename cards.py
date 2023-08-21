@@ -315,6 +315,7 @@ def check_winner(hand_one, hand_two):
             return 0
 
 
+sample_size = 100000
 
 
 
@@ -330,10 +331,14 @@ def calculate_equity_preflop(c1, c2):
         elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
             deck.remove(card)
 
+    for x in range(sample_size):
 
-    count = 0
+        nums = list(range(0, len(deck)))
+        random.shuffle(nums)
+        combination = []
+        for x in range(7):
+            combination.append(deck[nums[x]])
 
-    for combination in itertools.combinations(deck, 7):
 
         player_two = Player(combination[5], combination[6])
 
@@ -352,11 +357,6 @@ def calculate_equity_preflop(c1, c2):
         else:
             num_lost += 1
 
-        count += 1
-
-        if count >= 500000:
-            break
-
 
     total = num_won + num_lost + num_tied
     equity = num_won/total + 0.5 * num_tied/total
@@ -374,13 +374,23 @@ def calculate_equity_flop(c1, c2, b1, b2, b3):
             deck.remove(card)
         elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
             deck.remove(card)
+        elif(card.value == b1.value and card.suit == b1.suit):
+            deck.remove(card)
+        elif(card.value == b2.value and card.suit == b2.suit):
+            deck.remove(card)
+        elif(card.value == b3.value and card.suit == b3.suit):
+            deck.remove(card)
 
   
 
 
-    count = 0
+    for x in range(sample_size):
 
-    for combination in itertools.combinations(deck, 4):
+        nums = list(range(0, len(deck)))
+        random.shuffle(nums)
+        combination = []
+        for x in range(4):
+            combination.append(deck[nums[x]])
 
         player_two = Player(combination[2], combination[3])
 
@@ -399,11 +409,6 @@ def calculate_equity_flop(c1, c2, b1, b2, b3):
         else:
             num_lost += 1
 
-        count += 1
-
-        if count >= 500000:
-            break
-
 
     total = num_won + num_lost + num_tied
     equity = num_won/total + 0.5 * num_tied/total
@@ -421,11 +426,23 @@ def calculate_equity_turn(c1, c2, b1, b2, b3, b4):
             deck.remove(card)
         elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
             deck.remove(card)
+        elif(card.value == b1.value and card.suit == b1.suit):
+            deck.remove(card)
+        elif(card.value == b2.value and card.suit == b2.suit):
+            deck.remove(card)
+        elif(card.value == b3.value and card.suit == b3.suit):
+            deck.remove(card)
+        elif(card.value == b4.value and card.suit == b4.suit):
+            deck.remove(card)
 
 
-    count = 0
+    for x in range(sample_size):
 
-    for combination in itertools.combinations(deck, 3):
+        nums = list(range(0, len(deck)))
+        random.shuffle(nums)
+        combination = []
+        for x in range(3):
+            combination.append(deck[nums[x]])
 
         player_two = Player(combination[1], combination[2])
 
@@ -444,11 +461,6 @@ def calculate_equity_turn(c1, c2, b1, b2, b3, b4):
         else:
             num_lost += 1
 
-        count += 1
-
-        if count >= 500000:
-            break
-
 
     total = num_won + num_lost + num_tied
     equity = num_won/total + 0.5 * num_tied/total
@@ -466,12 +478,27 @@ def calculate_equity_river(c1, c2, b1, b2, b3, b4, b5):
             deck.remove(card)
         elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
             deck.remove(card)
+        elif(card.value == b1.value and card.suit == b1.suit):
+            deck.remove(card)
+        elif(card.value == b2.value and card.suit == b2.suit):
+            deck.remove(card)
+        elif(card.value == b3.value and card.suit == b3.suit):
+            deck.remove(card)
+        elif(card.value == b4.value and card.suit == b4.suit):
+            deck.remove(card)
+        elif(card.value == b5.value and card.suit == b5.suit):
+            deck.remove(card)
+
 
  
 
-    count = 0
+    for x in range(sample_size):
 
-    for combination in itertools.combinations(deck, 2):
+        nums = list(range(0, len(deck)))
+        random.shuffle(nums)
+        combination = []
+        for x in range(2):
+            combination.append(deck[nums[x]])
 
         player_two = Player(combination[0], combination[1])
 
@@ -491,11 +518,6 @@ def calculate_equity_river(c1, c2, b1, b2, b3, b4, b5):
         else:
             num_lost += 1
 
-        count += 1
-
-        if count >= 500000:
-            break
-
 
     total = num_won + num_lost + num_tied
     equity = num_won/total + 0.5 * num_tied/total
@@ -504,40 +526,52 @@ def calculate_equity_river(c1, c2, b1, b2, b3, b4, b5):
 
 
 def equity_bot_preflop(c1, c2):
-    if calculate_equity_preflop(c1, c2) > 0.5:
+    equity = calculate_equity_preflop(c1, c2)
+    if equity > 0.5:
         return 2.5
+    elif equity >= 0.3:
+        return 0
     else:
-        return -1
+        return 0
 
 
 def equity_bot_flop(c1, c2, b1, b2, b3):
-    if calculate_equity_flop(c1, c2, b1, b2, b3)> 0.5:
+    equity =  calculate_equity_flop(c1, c2, b1, b2, b3)
+    if equity > 0.5:
         return 2.5
+    elif equity >= 0.3:
+        return 0
     else:
-        return -1
+        return 0
 
     
 def equity_bot_turn(c1, c2, b1, b2, b3, b4):
-    if calculate_equity_turn(c1, c2, b1, b2, b3, b4) > 0.5:
+    equity =  calculate_equity_turn(c1, c2, b1, b2, b3, b4)
+    if equity > 0.5:
         return 2.5
+    elif equity >= 0.3:
+        return 0
     else:
-        return -1
+        return 0
 
 
 def equity_bot_river(c1, c2, b1, b2, b3, b4, b5):
-    if calculate_equity_river(c1, c2, b1, b2, b3, b4, b5) > 0.5:
+    equity =  calculate_equity_river(c1, c2, b1, b2, b3, b4, b5)
+    if equity > 0.5:
         return 2.5
+    elif equity >= 0.3:
+        return 0
     else:
-        return -1
+        return 0
 
 def random_bot():
-    choice = random.randrange(1,3)
+    choice = random.randrange(1,4)
     if choice == 1:
         return 2.5
     if choice == 2:
         return 0
     if choice == 3:
-        return -1
+        return 2.5
 
 
 
@@ -551,31 +585,39 @@ def play_hand(leads):
     c2 = deck[1]
 
 
+    print(player_one.card_one.value, player_one.card_two.value)
+    print(player_one.card_one.suit, player_one.card_two.suit)
+    print(player_two.card_one.value, player_two.card_two.value)
+    print(player_two.card_one.suit, player_two.card_two.suit)
+
     if leads % 2 == 0:
         player_one_bet = 1
         player_two_bet = 2
 
+        p1_decision = equity_bot_preflop(c1,c2)
         while (player_one_bet != player_two_bet):
-            
-            p1_decision = equity_bot_preflop(c1,c2)
             if p1_decision >= 0:
                 player_one_bet = player_two_bet + p1_decision
             else:
                 return -1 * player_one_bet
 
             p2_decision = random_bot()
+            print("random chooses: ", p2_decision)
             if p2_decision >= 0:
                 player_two_bet = player_one_bet + p2_decision
             else:
                 return player_two_bet
 
         board = Board(deck[4], deck[5], deck[6], deck[7], deck[8])
+        print(board.flop_one.value, board.flop_two.value,board.flop_three.value,board.turn.value,board.river.value)
+        print(board.flop_one.suit, board.flop_two.suit,board.flop_three.suit,board.turn.suit,board.river.suit)
 
         #Flop
         p1_decision = equity_bot_flop(c1,c2, board.flop_one, board.flop_two, board.flop_three)
         if p1_decision >= 0:
             player_one_bet = player_two_bet + p1_decision
         p2_decision = random_bot()
+        print("random chooses: ", p2_decision)
         if p2_decision >= 0:
             player_two_bet = player_one_bet + p2_decision
         else:
@@ -587,6 +629,7 @@ def play_hand(leads):
             else:
                 return -player_one_bet
             p2_decision = random_bot()
+            print("random chooses: ", p2_decision)
             if p2_decision >= 0:
                 player_two_bet = player_one_bet + p2_decision
             else:
@@ -596,6 +639,7 @@ def play_hand(leads):
         if p1_decision >= 0:
             player_one_bet = player_two_bet + p1_decision
         p2_decision = random_bot()
+        print("random chooses: ", p2_decision)
         if p2_decision >= 0:
             player_two_bet = player_one_bet + p2_decision
         else:
@@ -607,6 +651,7 @@ def play_hand(leads):
             else:
                 return -player_one_bet
             p2_decision = random_bot()
+            print("random chooses: ", p2_decision)
             if p2_decision >= 0:
                 player_two_bet = player_one_bet + p2_decision
             else:
@@ -617,6 +662,7 @@ def play_hand(leads):
         if p1_decision >= 0:
             player_one_bet = player_two_bet + p1_decision
         p2_decision = random_bot()
+        print("random chooses: ", p2_decision)
         if p2_decision >= 0:
             player_two_bet = player_one_bet + p2_decision
         else:
@@ -628,12 +674,15 @@ def play_hand(leads):
             else:
                 return -1 * player_one_bet
             p2_decision = random_bot()
+            print("random chooses: ", p2_decision)
             if p2_decision >= 0:
                 player_two_bet = player_one_bet + p2_decision
             else:
                 return player_two_bet
 
+        print("Showdown!")
         result = check_winner(best_hand([c1,c2,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river]),best_hand([deck[2],deck[3],board.flop_one, board.flop_two, board.flop_three, board.turn, board.river]))
+        print(result)
         if result == 1:
             return player_two_bet
         elif result == 2:
@@ -643,4 +692,3 @@ def play_hand(leads):
 
 
 print(play_hand(2))
-
