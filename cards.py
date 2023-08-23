@@ -532,7 +532,7 @@ def equity_bot_preflop(c1, c2):
     elif equity >= 0.3:
         return 0
     else:
-        return 0
+        return -1
 
 
 def equity_bot_flop(c1, c2, b1, b2, b3):
@@ -542,7 +542,7 @@ def equity_bot_flop(c1, c2, b1, b2, b3):
     elif equity >= 0.3:
         return 0
     else:
-        return 0
+        return -1
 
     
 def equity_bot_turn(c1, c2, b1, b2, b3, b4):
@@ -552,7 +552,7 @@ def equity_bot_turn(c1, c2, b1, b2, b3, b4):
     elif equity >= 0.3:
         return 0
     else:
-        return 0
+        return -1
 
 
 def equity_bot_river(c1, c2, b1, b2, b3, b4, b5):
@@ -562,7 +562,7 @@ def equity_bot_river(c1, c2, b1, b2, b3, b4, b5):
     elif equity >= 0.3:
         return 0
     else:
-        return 0
+        return -1
 
 def random_bot():
     choice = random.randrange(1,4)
@@ -571,7 +571,7 @@ def random_bot():
     if choice == 2:
         return 0
     if choice == 3:
-        return 2.5
+        return 5
 
 
 
@@ -602,7 +602,6 @@ def play_hand(leads):
                 return -1 * player_one_bet
 
             p2_decision = random_bot()
-            print("random chooses: ", p2_decision)
             if p2_decision >= 0:
                 player_two_bet = player_one_bet + p2_decision
             else:
@@ -617,7 +616,6 @@ def play_hand(leads):
         if p1_decision >= 0:
             player_one_bet = player_two_bet + p1_decision
         p2_decision = random_bot()
-        print("random chooses: ", p2_decision)
         if p2_decision >= 0:
             player_two_bet = player_one_bet + p2_decision
         else:
@@ -629,7 +627,6 @@ def play_hand(leads):
             else:
                 return -player_one_bet
             p2_decision = random_bot()
-            print("random chooses: ", p2_decision)
             if p2_decision >= 0:
                 player_two_bet = player_one_bet + p2_decision
             else:
@@ -639,7 +636,6 @@ def play_hand(leads):
         if p1_decision >= 0:
             player_one_bet = player_two_bet + p1_decision
         p2_decision = random_bot()
-        print("random chooses: ", p2_decision)
         if p2_decision >= 0:
             player_two_bet = player_one_bet + p2_decision
         else:
@@ -651,7 +647,6 @@ def play_hand(leads):
             else:
                 return -player_one_bet
             p2_decision = random_bot()
-            print("random chooses: ", p2_decision)
             if p2_decision >= 0:
                 player_two_bet = player_one_bet + p2_decision
             else:
@@ -662,7 +657,6 @@ def play_hand(leads):
         if p1_decision >= 0:
             player_one_bet = player_two_bet + p1_decision
         p2_decision = random_bot()
-        print("random chooses: ", p2_decision)
         if p2_decision >= 0:
             player_two_bet = player_one_bet + p2_decision
         else:
@@ -681,7 +675,10 @@ def play_hand(leads):
                 return player_two_bet
 
         print("Showdown!")
-        result = check_winner(best_hand([c1,c2,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river]),best_hand([deck[2],deck[3],board.flop_one, board.flop_two, board.flop_three, board.turn, board.river]))
+        bh_1 = best_hand([player_one.card_one,player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river])
+        bh_2 = best_hand([player_two.card_one,player_two.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river])
+        print(bh_1[0], bh_2[0])
+        result = check_winner( bh_1, bh_2)
         print(result)
         if result == 1:
             return player_two_bet
