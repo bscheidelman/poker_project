@@ -19,8 +19,10 @@ def play_hand(leads):
 
         p1_decision = equity_bot_preflop(c1,c2)
         while (player_one_bet != player_two_bet):
+
             if p1_decision >= 0:
                 player_one_bet = player_two_bet + p1_decision
+
             else:
                 return -1 * player_one_bet
 
@@ -43,8 +45,11 @@ def play_hand(leads):
             return player_two_bet
 
         while (player_one_bet != player_two_bet):
-            if p1_decision >= 0:
+            if p1_decision > 0:
                 player_one_bet = player_two_bet + p1_decision
+            elif p1_decision == 0:
+                player_one_bet = player_two_bet
+                break
             else:
                 return -player_one_bet
             p2_decision = random_bot()
@@ -63,8 +68,11 @@ def play_hand(leads):
             return player_two_bet
 
         while (player_one_bet != player_two_bet):
-            if p1_decision >= 0:
+            if p1_decision > 0:
                 player_one_bet = player_two_bet + p1_decision
+            elif p1_decision == 0:
+                player_one_bet == player_two_bet
+                break
             else:
                 return -player_one_bet
             p2_decision = random_bot()
@@ -84,8 +92,11 @@ def play_hand(leads):
             return player_two_bet
 
         while (player_one_bet != player_two_bet):
-            if p1_decision >= 0:
+            if p1_decision > 0:
                 player_one_bet = player_two_bet + p1_decision
+            elif p1_decision == 0:
+                player_one_bet = player_two_bet
+                break
             else:
                 return -1 * player_one_bet
             p2_decision = random_bot()
@@ -110,10 +121,12 @@ def play_hand(leads):
 
         p1_decision = equity_bot_preflop(c1,c2)
         while (player_one_bet != player_two_bet):
-            print(player_one_bet, player_two_bet)
             p2_decision = random_bot()
-            if p2_decision >= 0:
+            if p2_decision > 0:
                 player_two_bet = player_one_bet + p2_decision
+            elif p2_decision == 0:
+                player_two_bet = player_two_bet
+                break
             else:
                 return player_two_bet
             if p1_decision >= 0:
@@ -139,10 +152,12 @@ def play_hand(leads):
 
 
         while (player_one_bet != player_two_bet):
-            print(2)
             p2_decision = random_bot()
-            if p2_decision >= 0:
+            if p2_decision > 0:
                 player_two_bet = player_one_bet + p2_decision
+            elif p2_decision == 0:
+                player_two_bet = player_two_bet
+                break
             else:
                 return player_two_bet
             if p1_decision >= 0:
@@ -163,10 +178,12 @@ def play_hand(leads):
 
 
         while (player_one_bet != player_two_bet):
-            print(3)
             p2_decision = random_bot()
-            if p2_decision >= 0:
+            if p2_decision > 0:
                 player_two_bet = player_one_bet + p2_decision
+            elif p2_decision == 0:
+                player_two_bet = player_two_bet
+                break
             else:
                 return player_two_bet
             if p1_decision >= 0:
@@ -186,10 +203,12 @@ def play_hand(leads):
             return -player_one_bet
 
         while (player_one_bet != player_two_bet):
-            print(4)
             p2_decision = random_bot()
-            if p2_decision >= 0:
+            if p2_decision > 0:
                 player_two_bet = player_one_bet + p2_decision
+            elif p2_decision == 0:
+                player_two_bet = player_two_bet
+                break
             else:
                 return player_two_bet
             if p1_decision >= 0:
@@ -219,9 +238,9 @@ def hand_avg(num_hands):
     total = 0
     for x in range(num_hands):
         total += play_hand(x)
-        print(total)
+        print("Hand", x, "result:", total)
         
 
-    print(total/num_hands)
+    print("average return per hand:", total/num_hands)
 
 hand_avg(15)
