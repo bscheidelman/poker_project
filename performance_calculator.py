@@ -18,248 +18,210 @@ def play_hand(leads):
     print(c1.value, c1.suit, c2.value, c2.suit)
     print(c3.value, c3.suit, c4.value, c4.suit)
 
-    cap = 100
+    board = Board(deck[4], deck[5], deck[6], deck[7], deck[8])
 
-    if leads % 2 == 0:
-        player_one_bet = 1
-        player_two_bet = 2
+    chips = 100
+    small_blind = 0.5
+    big_blind = 1
+    player_one_bet = 0
+    player_two_bet = 0
 
-        p1_decision = equity_bot_preflop(c1,c2)
-        while (player_one_bet != player_two_bet):
-            print(player_one_bet, player_two_bet)
-
-            if p1_decision >= 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
-
-            else:
-                return -1 * player_one_bet
-
-            p2_decision = intermediate_bot_preflop(c3,c4, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision >= 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
-            else:
-                return player_two_bet
-
-        board = Board(deck[4], deck[5], deck[6], deck[7], deck[8])
-        print(board.flop_one.value,board.flop_two.value, board.flop_three.value, board.turn.value, board.river.value)
-        #Flop
-        p1_decision = equity_bot_flop(c1,c2, board.flop_one, board.flop_two, board.flop_three)
-        if p1_decision >= 0:
-            player_one_bet = player_two_bet + min(p1_decision, cap)
-            print("Player one raises: ", min(p1_decision, cap))
-        p2_decision = intermediate_bot_flop(c3,c4,board.flop_one, board.flop_two, board.flop_three, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-        if p2_decision >= 0:
-            player_two_bet = player_one_bet + min(p2_decision, cap) 
-            print("Player two raises: ", min(p2_decision, cap))
-        else:
-            return player_two_bet
-
-        while (player_one_bet != player_two_bet):
-            print(player_one_bet, player_two_bet)
-            if p1_decision > 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
-            elif p1_decision == 0:
+    if (leads % 2 == 0):
+        player_one_bet = small_blind
+        player_two_bet = big_blind
+        run_once = True
+        while player_one_bet != player_two_bet:
+            p1_decison = equity_bot_preflop(player_one.card_one, player_one.card_two)
+            if p1_decison > 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
+            elif p1_decison == 0:
                 player_one_bet = player_two_bet
-                print("Player one checks")
-                break
+                if run_once == False:
+                    break
             else:
                 return -player_one_bet
-            p2_decision = intermediate_bot_flop(c3,c4,board.flop_one, board.flop_two, board.flop_three, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision >= 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
+            p2_decison = intermediate_bot_preflop(player_two.card_one, player_two.card_two, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison >= 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
             else:
                 return player_two_bet
-        #Turn
-        p1_decision = equity_bot_turn(c1,c2, board.flop_one, board.flop_two, board.flop_three, board.turn)
-        if p1_decision >= 0:
-            player_one_bet = player_two_bet + min(p1_decision, cap)
-            print("Player one raises: ", min(p1_decision, cap))
-        p2_decision = intermediate_bot_turn(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-        if p2_decision >= 0:
-            player_two_bet = player_one_bet + min(p2_decision, cap) 
-            print("Player two raises: ", min(p2_decision, cap))
-        else:
-            return player_two_bet
+            run_once = False
 
-        while (player_one_bet != player_two_bet):
-            print(player_one_bet, player_two_bet)
-            if p1_decision > 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
-            elif p1_decision == 0:
-                player_one_bet == player_two_bet
-                print("Player one checks")
-                break
+
+        print("Flop!")
+        print(board.flop_one.value, board.flop_two.value, board.flop_three.value)
+
+        run_once = True
+        while run_once == True or player_one_bet != player_two_bet:
+            p1_decison = equity_bot_flop(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three)
+            if p1_decison > 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
+            elif p1_decison == 0:
+                player_one_bet = player_two_bet
+                if run_once == False:
+                    break
             else:
                 return -player_one_bet
-            p2_decision = intermediate_bot_turn(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision >= 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
+            p2_decison = intermediate_bot_flop(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three,player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison >= 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
             else:
                 return player_two_bet
-       
-        #River
-        p1_decision = equity_bot_river(c1,c2, board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
-        if p1_decision >= 0:
-            player_one_bet = player_two_bet + min(p1_decision, cap)
-            print("Player one raises: ", min(p1_decision, cap))
-        p2_decision = intermediate_bot_river(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-        if p2_decision >= 0:
-            player_two_bet = player_one_bet + min(p2_decision, cap) 
-            print("Player two raises: ", min(p2_decision, cap))
-        else:
-            return player_two_bet
+            run_once = False
 
-        while (player_one_bet != player_two_bet):
-            print(player_one_bet, player_two_bet)
-            if p1_decision > 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
-            elif p1_decision == 0:
+
+        print("Turn!")
+        print(board.flop_one.value, board.flop_two.value, board.flop_three.value, board.turn.value)
+
+        run_once = True
+        while run_once == True or player_one_bet != player_two_bet:
+            p1_decison = equity_bot_turn(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn)
+            if p1_decison > 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
+            elif p1_decison == 0:
                 player_one_bet = player_two_bet
-                print("Player one checks")
-                break
+                if run_once == False:
+                    break
             else:
-                return -1 * player_one_bet
-            p2_decision = intermediate_bot_river(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision >= 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
-
+                return -player_one_bet
+            p2_decison = intermediate_bot_turn(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, board.turn, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison >= 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
             else:
                 return player_two_bet
+            run_once = False
+
+        print("River!")
+        print(board.flop_one.value, board.flop_two.value, board.flop_three.value, board.turn.value, board.river.value)
+
+        run_once = True
+        while run_once == True or player_one_bet != player_two_bet:
+            p1_decison = equity_bot_river(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
+            if p1_decison > 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
+            elif p1_decison == 0:
+                player_one_bet = player_two_bet
+                if run_once == False:
+                    break
+            else:
+                return -player_one_bet
+            p2_decison = intermediate_bot_river(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison >= 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
+            else:
+                return player_two_bet
+            run_once = False
 
         bh_1 = best_hand([player_one.card_one,player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river])
         bh_2 = best_hand([player_two.card_one,player_two.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river])
         result = check_winner( bh_1, bh_2)
+
         if result == 1:
             return player_two_bet
         elif result == 2:
             return -1 * player_one_bet
-        else:
-            return 0
-
+        return 0
     else:
-        player_one_bet = 2
-        player_two_bet = 1
-
-        p1_decision = equity_bot_preflop(c1,c2)
-        while (player_one_bet != player_two_bet):
-            p2_decision = intermediate_bot_preflop(c3,c4, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision > 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
-            elif p2_decision == 0:
-                player_two_bet = player_two_bet
-                break
+        player_one_bet = big_blind
+        player_two_bet = small_blind
+        run_once = True
+        while player_one_bet != player_two_bet:
+            p2_decison = intermediate_bot_preflop(player_two.card_one, player_two.card_two, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison > 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
+            elif p2_decison == 0:
+                player_two_bet = player_one_bet
+                if run_once == False:
+                    break
             else:
                 return player_two_bet
-            if p1_decision >= 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
+            p1_decison = equity_bot_preflop(player_one.card_one, player_one.card_two)
+            if p1_decison >= 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
             else:
                 return -1 * player_one_bet
+            run_once = False
 
 
+        print("Flop!")
+        print(board.flop_one.value, board.flop_two.value, board.flop_three.value)
 
-        board = Board(deck[4], deck[5], deck[6], deck[7], deck[8])
-        print(board.flop_one.value,board.flop_two.value, board.flop_three.value, board.turn.value, board.river.value)
-
-        #Flop
-        p2_decision = intermediate_bot_flop(c3,c4,board.flop_one, board.flop_two, board.flop_three, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-        if p2_decision >= 0:
-            player_two_bet = player_one_bet + min(p2_decision, cap) 
-            print("Player two raises: ", min(p2_decision, cap))
-
-        p1_decision = equity_bot_flop(c1,c2, board.flop_one, board.flop_two, board.flop_three)
-        if p1_decision >= 0:
-            player_one_bet = player_two_bet + min(p1_decision, cap)
-            print("Player one raises: ", min(p1_decision, cap))
-        else:
-            return -player_one_bet
-        
-
-
-        while (player_one_bet != player_two_bet):
-            p2_decision = intermediate_bot_flop(c3,c4,board.flop_one, board.flop_two, board.flop_three, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision > 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
-            elif p2_decision == 0:
-                player_two_bet = player_two_bet
-                break
+        run_once = True
+        while run_once == True or player_one_bet != player_two_bet:
+            p2_decison = intermediate_bot_flop(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison > 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
+            elif p2_decison == 0:
+                player_two_bet = player_one_bet
+                if run_once == False:
+                    break
             else:
                 return player_two_bet
-            if p1_decision >= 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
-            else:
-                return -player_one_bet
-
-        #Turn
-        p2_decision = intermediate_bot_turn(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-        if p2_decision >= 0:
-            player_two_bet = player_one_bet + min(p2_decision, cap) 
-            print("Player two raises: ", min(p2_decision, cap))
-
-        p1_decision = equity_bot_turn(c1,c2, board.flop_one, board.flop_two, board.flop_three, board.turn)
-        if p1_decision >= 0:
-            player_one_bet = player_two_bet + min(p1_decision, cap)
-        else:
-            return -player_one_bet
-
-
-        while (player_one_bet != player_two_bet):
-            p2_decision = intermediate_bot_turn(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision > 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
-            elif p2_decision == 0:
-                player_two_bet = player_two_bet
-                break
-            else:
-                return player_two_bet
-            if p1_decision >= 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
-            else:
-                return -player_one_bet
-       
-        #River
-        p1_decision = equity_bot_river(c1,c2, board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
-
-        p2_decision = intermediate_bot_river(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-        if p2_decision >= 0:
-            player_two_bet = player_one_bet + min(p2_decision, cap) 
-            print("Player two raises: ", min(p2_decision, cap))
-        if p1_decision >= 0:
-            player_one_bet = player_two_bet + min(p1_decision, cap)
-            print("Player one raises: ", min(p1_decision, cap))
-        else:
-            return -player_one_bet
-
-        while (player_one_bet != player_two_bet):
-            p2_decision = intermediate_bot_river(c3,c4,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two_bet + player_one_bet, player_one_bet- player_two_bet)
-            if p2_decision > 0:
-                player_two_bet = player_one_bet + min(p2_decision, cap) 
-                print("Player two raises: ", min(p2_decision, cap))
-
-            elif p2_decision == 0:
-                player_two_bet = player_two_bet
-                break
-            else:
-                return player_two_bet
-            if p1_decision >= 0:
-                player_one_bet = player_two_bet + min(p1_decision, cap)
-                print("Player one raises: ", min(p1_decision, cap))
+            p1_decison = equity_bot_flop(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three)
+            if p1_decison >= 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
             else:
                 return -1 * player_one_bet
+            run_once = False
 
+        print("Turn!")
+        print(board.flop_one.value, board.flop_two.value, board.flop_three.value, board.turn.value)
+
+        run_once = True
+        while run_once == True or player_one_bet != player_two_bet:
+            p2_decison = intermediate_bot_turn(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, board.turn, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison > 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
+            elif p2_decison == 0:
+                player_two_bet = player_one_bet
+                if run_once == False:
+                    break
+            else:
+                return player_two_bet
+            p1_decison = equity_bot_turn(player_one.card_one, player_one.card_two , board.flop_one, board.flop_two, board.flop_three, board.turn)
+            if p1_decison >= 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
+            else:
+                return -1 * player_one_bet
+            run_once = False
+
+
+        print("River!")
+        print(board.flop_one.value, board.flop_two.value, board.flop_three.value, board.turn.value, board.river.value)
+
+        run_once = True
+        while run_once == True or player_one_bet != player_two_bet:
+            p2_decison = intermediate_bot_river(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
+            if p2_decison > 0:
+                player_two_bet = min(player_one_bet + p2_decison,chips)
+                print("Player Two raises by", p2_decison)
+            elif p2_decison == 0:
+                player_two_bet = player_one_bet
+                if run_once == False:
+                    break
+            else:
+                return player_two_bet
+            p1_decison = equity_bot_river(player_one.card_one, player_one.card_two , board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
+            if p1_decison >= 0:
+                player_one_bet = min(player_two_bet + p1_decison,chips)
+                print("Player One raises by", p1_decison)
+            else:
+                return -1 * player_one_bet
+            run_once = False
 
         bh_1 = best_hand([player_one.card_one,player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river])
         bh_2 = best_hand([player_two.card_one,player_two.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river])
@@ -269,14 +231,7 @@ def play_hand(leads):
             return player_two_bet
         elif result == 2:
             return -1 * player_one_bet
-        else:
-            return 0
-
-
-
-
-
-       
+        return 0
 
 def hand_avg(num_hands):
     total = 0
@@ -289,5 +244,3 @@ def hand_avg(num_hands):
         
 
     print("average return per hand:", total/num_hands)
-
-hand_avg(100)
