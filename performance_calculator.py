@@ -1,5 +1,5 @@
 from bases import Card, Player, Board, best_hand, check_winner
-from equity_bot import equity_bot_preflop, equity_bot_flop, equity_bot_turn, equity_bot_river, random_bot
+from simple_bot import simple_bot_preflop, simple_bot_flop, simple_bot_turn, simple_bot_river, random_bot
 from intermediate_bot import intermediate_bot_flop, intermediate_bot_preflop, intermediate_bot_river, intermediate_bot_turn
 import itertools, random
 
@@ -31,7 +31,7 @@ def play_hand(leads):
         player_two_bet = big_blind
         run_once = True
         while player_one_bet != player_two_bet:
-            p1_decison = equity_bot_preflop(player_one.card_one, player_one.card_two)
+            p1_decison = simple_bot_preflop(player_one.card_one, player_one.card_two)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -55,7 +55,7 @@ def play_hand(leads):
 
         run_once = True
         while run_once == True or player_one_bet != player_two_bet:
-            p1_decison = equity_bot_flop(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three)
+            p1_decison = simple_bot_flop(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -79,7 +79,7 @@ def play_hand(leads):
 
         run_once = True
         while run_once == True or player_one_bet != player_two_bet:
-            p1_decison = equity_bot_turn(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn)
+            p1_decison = simple_bot_turn(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -102,7 +102,7 @@ def play_hand(leads):
 
         run_once = True
         while run_once == True or player_one_bet != player_two_bet:
-            p1_decison = equity_bot_river(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
+            p1_decison = simple_bot_river(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -144,7 +144,7 @@ def play_hand(leads):
                     break
             else:
                 return player_two_bet
-            p1_decison = equity_bot_preflop(player_one.card_one, player_one.card_two)
+            p1_decison = simple_bot_preflop(player_one.card_one, player_one.card_two)
             if p1_decison >= 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -168,7 +168,7 @@ def play_hand(leads):
                     break
             else:
                 return player_two_bet
-            p1_decison = equity_bot_flop(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three)
+            p1_decison = simple_bot_flop(player_one.card_one, player_one.card_two,board.flop_one, board.flop_two, board.flop_three)
             if p1_decison >= 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -191,7 +191,7 @@ def play_hand(leads):
                     break
             else:
                 return player_two_bet
-            p1_decison = equity_bot_turn(player_one.card_one, player_one.card_two , board.flop_one, board.flop_two, board.flop_three, board.turn)
+            p1_decison = simple_bot_turn(player_one.card_one, player_one.card_two , board.flop_one, board.flop_two, board.flop_three, board.turn)
             if p1_decison >= 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -215,7 +215,7 @@ def play_hand(leads):
                     break
             else:
                 return player_two_bet
-            p1_decison = equity_bot_river(player_one.card_one, player_one.card_two , board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
+            p1_decison = simple_bot_river(player_one.card_one, player_one.card_two , board.flop_one, board.flop_two, board.flop_three, board.turn, board.river)
             if p1_decison >= 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
