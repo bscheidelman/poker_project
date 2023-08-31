@@ -10,8 +10,10 @@ def calculate_pot_value(equity, pot_size, cost_size):
     return 999
 
 def raise_function(equity):
+    #Equity squared as opposed to just Equity is used as to avoid over better with weak hands as this signfigantly lowers the chance of it betting with lowequity.
     raise_percent = 100 * (equity*equity)
     print("raise percentage:", raise_percent * 1.33)
+    #random.randint(1,73) is used as to design it to almost always raise around aces preflop. ~0.85 is aces equity vs blind hand preflop. 0.85 * 0.85 = 0.7225.
     return raise_percent < random.randint(1,73)
 
 
