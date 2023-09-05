@@ -1,0 +1,72 @@
+from equity_calculator import calculate_equity_preflop, calculate_equity_flop, calculate_equity_turn, calculate_equity_river, calculate_equity_preflop_vs
+from bases import Card, Player, Board, best_hand, check_winner
+import itertools, random
+
+
+class categorization_bot:
+    def __init__(self, c1, c2, p1_bet, p2_bet):
+        self.c1 = c1
+        self.c2 = c2
+        self.p1_bet = p1_bet
+        self.p2_bet = p2_bet
+        pre_flop_make_range()
+    potential_range = {}
+
+    def make_range(self):
+        for x in range(2,15):
+            for y in range(2,15):
+                if x != y:
+                    potential_range[x,y,"S"] = [1, .5]
+                    potential_range[x,y,"O"] = [1, .5]
+                else:
+                    potential_range[x,y,"P"] = [1, .5]
+
+    def pre_flop_rank_range(self):
+        for hand in potential_range:
+            potential_range[hand][1] = calculate_equity_preflop_vs(c1, c2, hand[0], hand[1], hand[2])
+
+
+    def pre_flop_action(self, action, raise_amount, pot_size):
+        if action == "Raise":
+            for hand in potential_range:
+                potential_range[hand][0] = potential_range[hand][0] * (1 - potential_range[hand][1]) * (1 + (raise_amount/pot_size))
+        elif action == "Check":
+            for hand in potential_range:
+                potential_range[hand][0] = potential_range[hand][0] * potential_range[hand][1]
+        elif action == "Call":
+            for hand in potential_range:
+                potential_range[hand][0] = potential_range[hand][0] * (1 - potential_range[hand][1]) * (1 + (raise_amount/pot_size))
+
+
+    def calculate_pot_value(equity, pot_size, cost_size):
+        if cost_size > 0:
+            print("pot_value:",  ((pot_size + cost_size)/cost_size) * equity)
+            return ((pot_size + cost_size)/cost_size) * equity
+        return 999
+
+    def pre_flop_decision(self, action, raise_amount, pot_size):
+        p2_bet = p1_bet + raise_amount
+        pre_flop_action(action, raise_amount, p2_bet + p1_bet)
+
+        if action == "Raise":
+            total = count = 0
+            for hand in potential_range:
+                count += potential_range[hand][0]
+                total += potential_range[hand][0] * calculate_pot_value(potential_range[hand][1], pot_size, raise_amount)
+
+            if total/count < 1:
+                return -1
+            pot_size = pot_size + raise_amount
+
+
+        total = count = 0
+        for hand in potential_range:
+            total += potential_range[0] * potential_range[1]
+            count += potential_range[0]
+
+        avg_equity = total/count
+        raise_percent = 100 * (avg_equity*avg_equity)
+
+        if raise_percent < random.randint(1,73):
+            return .5 * pot_size
+        return 0
