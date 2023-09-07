@@ -55,11 +55,12 @@ class categorization_bot:
                     self.potential_range[card_one_clubs, card_one_hearts] = [1, .5]
                     self.potential_range[card_one_clubs, card_one_diamonds] = [1, .5]
                     self.potential_range[card_one_diamonds, card_one_hearts] = [1, .5]
+        self.pre_flop_rank_range()
 
 
 
 
-    def pre_flop_action(self, action, raise_amount, pot_size):
+    def update_action(self, action, raise_amount, pot_size):
         if action == "Raise":
             for hand in self.potential_range:
                 self.potential_range[hand][0] = self.potential_range[hand][0] * (1 - self.potential_range[hand][1]) * (1 + (raise_amount/pot_size))
@@ -79,13 +80,13 @@ class categorization_bot:
 
     def pre_flop_decision(self, action, raise_amount, pot_size):
         self.p1_bet = self.p1_bet + raise_amount
-        pre_flop_action(action, raise_amount, self.p1_bet + self.p1_bet)
+        self.update_action(action, raise_amount, self.p1_bet + self.p1_bet)
 
         if action == "Raise":
             total = count = 0
             for hand in self.potential_range:
                 count += self.potential_range[hand][0]
-                total += self.potential_range[hand][0] * calculate_pot_value(self.potential_range[hand][1], pot_size, raise_amount)
+                total += self.potential_range[hand][0] * self.calculate_pot_value(self.potential_range[hand][1], pot_size, raise_amount)
 
             if total/count < 1:
                 return -1
@@ -94,8 +95,8 @@ class categorization_bot:
 
         total = count = 0
         for hand in self.potential_range:
-            total += self.potential_range[0] * self.potential_range[1]
-            count += self.potential_range[0]
+            total += self.potential_range[hand][0] * self.potential_range[hand][1]
+            count += self.potential_range[hand][0]
 
         avg_equity = total/count
         raise_percent = 100 * (avg_equity*avg_equity)
