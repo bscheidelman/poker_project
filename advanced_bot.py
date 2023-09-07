@@ -2,7 +2,7 @@ from equity_calculator import calculate_equity_preflop, calculate_equity_flop, c
 from bases import Card, Player, Board, best_hand, check_winner
 import itertools, random
 
-
+#IN PROGRESS
 
 class categorization_bot:
     def __init__(self, c1, c2, p1_bet, p2_bet):
