@@ -53,6 +53,57 @@ def calculate_equity_preflop(c1, c2):
     equity = num_won/total + 0.5 * num_tied/total
     return equity
 
+def calculate_equity_preflop_vs(c1, c2, c3, c4):
+    suit_li = ["Diamonds", "Hearts", "Spades", "Clubs"]
+    deck = [Card(suit, value) for value in range(2, 15) for suit in suit_li]
+
+    random.shuffle(deck)
+
+    num_tied = num_won = num_lost = 0
+    
+
+    player_one = Player(c1, c2)
+    player_two = Player(c3, c4)
+
+    for card in deck:
+        if (card.value == player_one.card_one.value and card.suit == player_one.card_one.suit):
+            deck.remove(card)
+        elif (card.value == player_one.card_two.value and card.suit == player_one.card_two.suit):
+            deck.remove(card)
+    for card in deck:
+        if (card.value == player_two.card_one.value and card.suit == player_two.card_one.suit):
+            deck.remove(card)
+        elif (card.value == player_two.card_two.value and card.suit == player_two.card_two.suit):
+            deck.remove(card)
+
+    for x in range(1000):
+
+        nums = list(range(0, len(deck)))
+        random.shuffle(nums)
+        combination = []
+        for x in range(7):
+            combination.append(deck[nums[x]])
+
+        board = Board(combination[0],combination[1],combination[2],combination[3],combination[4])
+
+        pool = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one.card_one, player_one.card_two]
+        pool_two = [board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_two.card_one, player_two.card_two]
+
+        result = check_winner(best_hand(pool), best_hand(pool_two))
+
+
+        if result == 0:
+            num_tied += 1
+        elif result == 1:
+            num_won += 1
+        else:
+            num_lost += 1
+
+
+    total = num_won + num_lost + num_tied
+    equity = num_won/total + 0.5 * num_tied/total
+    return equity
+
 def calculate_equity_flop(c1, c2, b1, b2, b3):
     suit_li = ["Diamonds", "Hearts", "Spades", "Clubs"]
     deck = [Card(suit, value) for value in range(2, 15) for suit in suit_li]
