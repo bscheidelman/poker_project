@@ -2,19 +2,49 @@ from equity_calculator import calculate_equity_preflop, calculate_equity_flop, c
 from bases import Card, Player, Board, best_hand, check_winner
 import itertools, random
 
-#IN PROGRESS
+
 
 class categorization_bot:
-    def __init__(self, c1, c2, p1_bet, p2_bet):
+    def __init__(self, c1, c2):
         self.c1 = c1
         self.c2 = c2
-        self.p1_bet = p1_bet
-        self.p2_bet = p2_bet
         self.potential_range = {}
+
+
+    def update_board_flop(self, b1, b2, b3):
+        self.b1 = b1
+        self.b2 = b2
+        self.b3 = b3
+
+    def update_board_turn(self, b4):
+        self.b4 = b4
+
+    def update_board_river(self, b5):
+        self.b5 = b5
 
     def pre_flop_rank_range(self):
         for hand in self.potential_range:
             self.potential_range[hand][1] = calculate_equity_preflop_vs(self.c1, self.c2, hand[0], hand[1])
+
+    def flop_rank_range(self):
+        for hand in self.potential_range:
+            self.potential_range[hand][1] = calculate_equity_preflop_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3)
+
+    def turn_rank_range(self):
+        for hand in self.potential_range:
+            self.potential_range[hand][1] = calculate_equity_preflop_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3, self.b4)
+
+    def river_rank_range(self):
+        for hand in self.potential_range:
+            p1_pool = [self.c1, self.c2, self.b1, self.b2, self.b3, self.b4. self.b5]
+            p2_pool = [hand[0], hand[1], self.b1, self.b2, self.b3, self.b4. self.b5]
+            result = check_winner(best_hand(p1_pool, p2_pool))
+            if result == 1:
+                self.potential_range[hand][1] = 1
+            elif result == 2:
+                self.potential_range[hand][1] = 0
+            else:
+                self.potential_range[hand][1] = 0.5
 
     def make_range(self):
         for x in range(2,15):
@@ -57,9 +87,6 @@ class categorization_bot:
                     self.potential_range[card_one_diamonds, card_one_hearts] = [1, .5]
         self.pre_flop_rank_range()
 
-
-
-
     def update_action(self, action, raise_amount, pot_size):
         if action == "Raise":
             for hand in self.potential_range:
@@ -74,15 +101,11 @@ class categorization_bot:
 
     def calculate_pot_value(equity, pot_size, cost_size):
         if cost_size > 0:
-            print("pot_value:",  ((pot_size + cost_size)/cost_size) * equity)
             return ((pot_size + cost_size)/cost_size) * equity
         return 999
 
-    def pre_flop_decision(self, action, raise_amount, pot_size):
-        self.p1_bet = self.p1_bet + raise_amount
-        self.update_action(action, raise_amount, self.p1_bet + self.p1_bet)
-
-        if action == "Raise":
+    def decision_engine(self, raise_amount, pot_size):
+        if raise_amount > 0:
             total = count = 0
             for hand in self.potential_range:
                 count += self.potential_range[hand][0]
