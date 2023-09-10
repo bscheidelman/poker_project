@@ -1,4 +1,0 @@
-Categorization Bot Upcoming Feature List:
-Dynamic Bet Sizing based on board texture --> Larger bet sizing on wet boards and smaller sizing on monocrome boards
-Range Adjustment --> Remove hands from potential range that include cards in your hand
-Live Range Display --> Display the predicted possibility of each hand 
