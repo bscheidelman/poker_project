@@ -1,7 +1,7 @@
 # Project Title: Heads-Up Poker AI
 
 # Description:
-This GitHub project is a comprehensive implementation of a Heads-Up Poker AI system, complete with three distinct AI bots, an equity calculator, and a performance evaluation tool. Whether you're looking to improve your poker game or explore the world of AI in gaming, this project has you covered.
+This GitHub project is a comprehensive implementation of a Heads-Up Poker AI system, complete with three distinct AI bots, an equity calculator, and a performance evaluation tool. Whether you're looking to improve your poker game or explore the world of algorithmic decision making in gaming, this project has you covered.
 
 # Key Components:
 
