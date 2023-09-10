@@ -35,8 +35,8 @@ class categorization_bot:
 
     def river_rank_range(self):
         for hand in self.potential_range:
-            p1_pool = [self.c1, self.c2, self.b1, self.b2, self.b3, self.b4. self.b5]
-            p2_pool = [hand[0], hand[1], self.b1, self.b2, self.b3, self.b4. self.b5]
+            p1_pool = [self.c1, self.c2, self.b1, self.b2, self.b3, self.b4, self.b5]
+            p2_pool = [hand[0], hand[1], self.b1, self.b2, self.b3, self.b4, self.b5]
             result = check_winner(best_hand(p1_pool, p2_pool))
             if result == 1:
                 self.potential_range[hand][1] = 1
