@@ -235,9 +235,6 @@ def play_hand(leads):
         return 0
 
 
-        
-
-    print("average return per hand:", total/num_hands)
 
 
 def play_hand_vs(leads):
@@ -270,8 +267,8 @@ def play_hand_vs(leads):
         player_one_bet = small_blind
         player_two_bet = big_blind
         run_once = True
+        cat_bot.pre_flop_rank_range()
         while player_one_bet != player_two_bet:
-            cat_bot.pre_flop_rank_range()
             p1_decison = cat_bot.decision_engine(player_two_bet -player_one_bet, player_two_bet + player_one_bet)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
@@ -303,8 +300,8 @@ def play_hand_vs(leads):
         cat_bot.update_board_flop(board.flop_one, board.flop_two, board.flop_three)
 
         run_once = True
+        cat_bot.flop_rank_range()
         while run_once == True or player_one_bet != player_two_bet:
-            cat_bot.flop_rank_range()
             p1_decison = cat_bot.decision_engine(player_two_bet -player_one_bet, player_two_bet + player_one_bet)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
@@ -335,8 +332,8 @@ def play_hand_vs(leads):
         cat_bot.update_board_turn(board.turn)
 
         run_once = True
+        cat_bot.turn_rank_range()
         while run_once == True or player_one_bet != player_two_bet:
-            cat_bot.turn_rank_range()
             p1_decison = p1_decison = cat_bot.decision_engine(player_two_bet -player_one_bet, player_two_bet + player_one_bet)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
@@ -366,8 +363,8 @@ def play_hand_vs(leads):
         cat_bot.update_board_river(board.river)
 
         run_once = True
+        cat_bot.river_rank_range()
         while run_once == True or player_one_bet != player_two_bet:
-            cat_bot.river_rank_range()
             p1_decison = p1_decison = cat_bot.decision_engine(player_two_bet -player_one_bet, player_two_bet + player_one_bet)
             if p1_decison > 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
@@ -405,8 +402,8 @@ def play_hand_vs(leads):
         player_one_bet = big_blind
         player_two_bet = small_blind
         run_once = True
+        cat_bot.pre_flop_rank_range()
         while player_one_bet != player_two_bet:
-            cat_bot.pre_flop_rank_range()
             p1_decison = 1
             p2_decison = intermediate_bot_preflop(player_two.card_one, player_two.card_two, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
             if p2_decison > 0:
@@ -438,8 +435,9 @@ def play_hand_vs(leads):
         cat_bot.update_board_flop(board.flop_one, board.flop_two, board.flop_three)
 
         run_once = True
+        cat_bot.flop_rank_range()
         while run_once == True or player_one_bet != player_two_bet:
-            cat_bot.flop_rank_range()
+            p1_decison = 0
             p2_decison = intermediate_bot_flop(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
             if p2_decison > 0:
                 player_two_bet = min(player_one_bet + p2_decison,chips)
@@ -469,8 +467,9 @@ def play_hand_vs(leads):
         cat_bot.update_board_turn(board.turn)
 
         run_once = True
+        cat_bot.turn_rank_range()
         while run_once == True or player_one_bet != player_two_bet:
-            cat_bot.turn_rank_range()
+            p1_decison = 0
             p2_decison = intermediate_bot_turn(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, board.turn, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
             if p2_decison > 0:
                 player_two_bet = min(player_one_bet + p2_decison,chips)
@@ -487,7 +486,7 @@ def play_hand_vs(leads):
                     break
             else:
                 return player_two_bet
-            p1_decison = p1_decison = cat_bot.decision_engine(player_two_bet -player_one_bet, player_two_bet + player_one_bet)
+            p1_decison = p1_decison = cat_bot.decision_engine(player_two_bet - player_one_bet, player_two_bet + player_one_bet)
             if p1_decison >= 0:
                 player_one_bet = min(player_two_bet + p1_decison,chips)
                 print("Player One raises by", p1_decison)
@@ -501,8 +500,9 @@ def play_hand_vs(leads):
         cat_bot.update_board_river(board.river)
 
         run_once = True
+        cat_bot.river_rank_range()
         while run_once == True or player_one_bet != player_two_bet:
-            cat_bot.river_rank_range()
+            p1_decison = 0
             p2_decison = intermediate_bot_river(player_two.card_one, player_two.card_two, board.flop_one, board.flop_two, board.flop_three, board.turn, board.river, player_one_bet + player_two_bet, player_one_bet - player_two_bet)
             if p2_decison > 0:
                 player_two_bet = min(player_one_bet + p2_decison,chips)
@@ -544,3 +544,6 @@ def hand_avg(num_hands):
         result = play_hand_vs(x)
         print("Hand", x, "result:", result)
         total += result
+        print("average return per hand:", total/num_hands)
+
+hand_avg(5)
