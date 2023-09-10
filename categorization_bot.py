@@ -1,7 +1,6 @@
-from equity_calculator import calculate_equity_preflop, calculate_equity_flop, calculate_equity_turn, calculate_equity_river, calculate_equity_preflop_vs
-from bases import Card, Player, Board, best_hand, check_winner
+from equity_calculator import calculate_equity_preflop, calculate_equity_flop, calculate_equity_turn, calculate_equity_river, calculate_equity_preflop_vs, calculate_equity_flop_vs, calculate_equity_turn_vs
 import itertools, random
-
+from bases import Card, Player, Board, best_hand, check_winner
 
 
 class categorization_bot:
@@ -26,13 +25,13 @@ class categorization_bot:
         for hand in self.potential_range:
             self.potential_range[hand][1] = calculate_equity_preflop_vs(self.c1, self.c2, hand[0], hand[1])
 
-    def flop_rank_range(self):
+    def flop_rank_range(self): 
         for hand in self.potential_range:
-            self.potential_range[hand][1] = calculate_equity_preflop_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3)
+            self.potential_range[hand][1] = calculate_equity_flop_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3)
 
     def turn_rank_range(self):
         for hand in self.potential_range:
-            self.potential_range[hand][1] = calculate_equity_preflop_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3, self.b4)
+            self.potential_range[hand][1] = calculate_equity_turn_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3, self.b4)
 
     def river_rank_range(self):
         for hand in self.potential_range:
@@ -99,7 +98,7 @@ class categorization_bot:
                 self.potential_range[hand][0] = self.potential_range[hand][0] * (1 - self.potential_range[hand][1]) * (1 + (raise_amount/pot_size))
 
 
-    def calculate_pot_value(equity, pot_size, cost_size):
+    def calculate_pot_value(self, equity, pot_size, cost_size):
         if cost_size > 0:
             return ((pot_size + cost_size)/cost_size) * equity
         return 999
@@ -109,6 +108,7 @@ class categorization_bot:
             total = count = 0
             for hand in self.potential_range:
                 count += self.potential_range[hand][0]
+                print(self.potential_range[hand][1])
                 total += self.potential_range[hand][0] * self.calculate_pot_value(self.potential_range[hand][1], pot_size, raise_amount)
 
             if total/count < 1:
