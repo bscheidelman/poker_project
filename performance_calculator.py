@@ -544,6 +544,4 @@ def hand_avg(num_hands):
         result = play_hand_vs(x)
         print("Hand", x, "result:", result)
         total += result
-        print("average return per hand:", total/num_hands)
-
-hand_avg(5)
+        print("average return per hand:", total/x)
