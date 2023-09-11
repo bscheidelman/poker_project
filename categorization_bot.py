@@ -14,12 +14,22 @@ class categorization_bot:
         self.b1 = b1
         self.b2 = b2
         self.b3 = b3
+        for hand in list(self.potential_range):
+            if (hand[0].value == self.b1.value and hand[0].suit == self.b1.suit) or (hand[0].value == self.b2.value and hand[0].suit == self.b2.suit) or (hand[0].value == self.b3.value and hand[0].suit == self.b3.suit) or (hand[1].value == self.b1.value and hand[1].suit == self.b1.suit) or (hand[1].value == self.b2.value and hand[1].suit == self.b2.suit) or (hand[1].value == self.b3.value and hand[1].suit == self.b3.suit):
+                del self.potential_range[hand]
+
 
     def update_board_turn(self, b4):
         self.b4 = b4
+        for hand in list(self.potential_range):
+            if (hand[0].value == self.b4.value and hand[0].suit == self.b4.suit) or (hand[1].value == self.b4.value and hand[1].suit == self.b4.suit):
+                del self.potential_range[hand]
 
     def update_board_river(self, b5):
         self.b5 = b5
+        for hand in list(self.potential_range):
+            if (hand[0].value == self.b5.value and hand[0].suit == self.b5.suit) or (hand[1].value == self.b5.value and hand[1].suit == self.b5.suit):
+                del self.potential_range[hand]
 
     def pre_flop_rank_range(self):
         for hand in self.potential_range:
@@ -37,7 +47,7 @@ class categorization_bot:
         for hand in self.potential_range:
             p1_pool = [self.c1, self.c2, self.b1, self.b2, self.b3, self.b4, self.b5]
             p2_pool = [hand[0], hand[1], self.b1, self.b2, self.b3, self.b4, self.b5]
-            result = check_winner(best_hand(p1_pool, p2_pool))
+            result = check_winner(best_hand(p1_pool), best_hand(p2_pool))
             if result == 1:
                 self.potential_range[hand][1] = 1
             elif result == 2:
@@ -108,7 +118,6 @@ class categorization_bot:
             total = count = 0
             for hand in self.potential_range:
                 count += self.potential_range[hand][0]
-                print(self.potential_range[hand][1])
                 total += self.potential_range[hand][0] * self.calculate_pot_value(self.potential_range[hand][1], pot_size, raise_amount)
 
             if total/count < 1:
