@@ -10,6 +10,11 @@ class categorization_bot:
         self.potential_range = {}
 
 
+    def update_board_preflop(self):
+        for hand in list(self.potential_range):
+            if (hand[0].value == self.c1.value and hand[0].suit == self.c1.suit) or (hand[1].value == self.c1.value and hand[1].suit == self.c1.suit) or (hand[0].value == self.c2.value and hand[0].suit == self.c2.suit) or (hand[1].value == self.c2.value and hand[1].suit == self.c2.suit):
+                del self.potential_range[hand]
+
     def update_board_flop(self, b1, b2, b3):
         self.b1 = b1
         self.b2 = b2
@@ -17,6 +22,7 @@ class categorization_bot:
         for hand in list(self.potential_range):
             if (hand[0].value == self.b1.value and hand[0].suit == self.b1.suit) or (hand[0].value == self.b2.value and hand[0].suit == self.b2.suit) or (hand[0].value == self.b3.value and hand[0].suit == self.b3.suit) or (hand[1].value == self.b1.value and hand[1].suit == self.b1.suit) or (hand[1].value == self.b2.value and hand[1].suit == self.b2.suit) or (hand[1].value == self.b3.value and hand[1].suit == self.b3.suit):
                 del self.potential_range[hand]
+
 
 
     def update_board_turn(self, b4):
@@ -99,6 +105,7 @@ class categorization_bot:
                     self.potential_range[card_one_clubs, card_one_hearts] = [1, .5, .5]
                     self.potential_range[card_one_clubs, card_one_diamonds] = [1, .5, .5]
                     self.potential_range[card_one_diamonds, card_one_hearts] = [1, .5, .5]
+        self.update_board_preflop()
         self.pre_flop_rank_range()
 
     def visualize_range(self):
