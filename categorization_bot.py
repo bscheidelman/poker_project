@@ -34,14 +34,17 @@ class categorization_bot:
     def pre_flop_rank_range(self):
         for hand in self.potential_range:
             self.potential_range[hand][1] = calculate_equity_preflop_vs(self.c1, self.c2, hand[0], hand[1])
+            self.potential_range[hand][2] = calculate_equity_preflop(hand[0], hand[1])
 
     def flop_rank_range(self): 
         for hand in self.potential_range:
             self.potential_range[hand][1] = calculate_equity_flop_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3)
+            self.potential_range[hand][2] = calculate_equity_flop(hand[0], hand[1], self.b1, self.b2, self.b3)
 
     def turn_rank_range(self):
         for hand in self.potential_range:
             self.potential_range[hand][1] = calculate_equity_turn_vs(self.c1, self.c2, hand[0], hand[1], self.b1, self.b2, self.b3, self.b4)
+            self.potential_range[hand][2] = calculate_equity_turn(hand[0], hand[1], self.b1, self.b2, self.b3, self.b4)
 
     def river_rank_range(self):
         for hand in self.potential_range:
@@ -54,10 +57,12 @@ class categorization_bot:
                 self.potential_range[hand][1] = 0
             else:
                 self.potential_range[hand][1] = 0.5
+            self.potential_range[hand][2] = calculate_equity_river(hand[0], hand[1], self.b1, self.b2, self.b3, self.b4, self.b5)
 
     def make_range(self):
         for x in range(2,15):
             for y in range(2,15):
+                #[Weight, VS_Equity, Blind_Equity]
                 if x != y:
                     card_one_spades = Card( "Spades", x)
                     card_one_hearts = Card( "Hearts", x)
@@ -67,46 +72,71 @@ class categorization_bot:
                     card_two_hearts = Card( "Hearts", y)
                     card_two_clubs = Card( "Clubs", y)
                     card_two_diamonds = Card( "Diamonds", y)
-                    self.potential_range[card_one_spades, card_two_spades] = [1, .5]
-                    self.potential_range[card_one_spades, card_two_hearts] = [1, .5]
-                    self.potential_range[card_one_spades, card_two_clubs] = [1, .5]
-                    self.potential_range[card_one_spades, card_two_diamonds] = [1, .5]
-                    self.potential_range[card_one_clubs, card_two_spades] = [1, .5]
-                    self.potential_range[card_one_clubs, card_two_hearts] = [1, .5]
-                    self.potential_range[card_one_clubs, card_two_clubs] = [1, .5]
-                    self.potential_range[card_one_clubs, card_two_diamonds] = [1, .5]
-                    self.potential_range[card_one_hearts, card_two_spades] = [1, .5]
-                    self.potential_range[card_one_hearts, card_two_hearts] = [1, .5]
-                    self.potential_range[card_one_hearts, card_two_clubs] = [1, .5]
-                    self.potential_range[card_one_hearts, card_two_diamonds] = [1, .5]
-                    self.potential_range[card_one_diamonds, card_two_spades] = [1, .5]
-                    self.potential_range[card_one_diamonds, card_two_hearts] = [1, .5]
-                    self.potential_range[card_one_diamonds, card_two_clubs] = [1, .5]
-                    self.potential_range[card_one_diamonds, card_two_diamonds] = [1, .5]
+                    self.potential_range[card_one_spades, card_two_spades] = [1, .5, .5]
+                    self.potential_range[card_one_spades, card_two_hearts] = [1, .5, .5]
+                    self.potential_range[card_one_spades, card_two_clubs] = [1, .5, .5]
+                    self.potential_range[card_one_spades, card_two_diamonds] = [1, .5, .5]
+                    self.potential_range[card_one_clubs, card_two_spades] = [1, .5, .5]
+                    self.potential_range[card_one_clubs, card_two_hearts] = [1, .5, .5]
+                    self.potential_range[card_one_clubs, card_two_clubs] = [1, .5, .5]
+                    self.potential_range[card_one_clubs, card_two_diamonds] = [1, .5, .5]
+                    self.potential_range[card_one_hearts, card_two_spades] = [1, .5, .5]
+                    self.potential_range[card_one_hearts, card_two_hearts] = [1, .5, .5]
+                    self.potential_range[card_one_hearts, card_two_clubs] = [1, .5, .5]
+                    self.potential_range[card_one_hearts, card_two_diamonds] = [1, .5, .5]
+                    self.potential_range[card_one_diamonds, card_two_spades] = [1, .5, .5]
+                    self.potential_range[card_one_diamonds, card_two_hearts] = [1, .5, .5]
+                    self.potential_range[card_one_diamonds, card_two_clubs] = [1, .5, .5]
+                    self.potential_range[card_one_diamonds, card_two_diamonds] = [1, .5, .5]
                 else:
                     card_one_spades = Card( "Spades", x)
                     card_one_hearts = Card( "Hearts", x)
                     card_one_clubs = Card( "Clubs", x)
                     card_one_diamonds = Card( "Diamonds", x)
-                    self.potential_range[card_one_spades, card_one_hearts] = [1, .5]
-                    self.potential_range[card_one_spades, card_one_clubs] = [1, .5]
-                    self.potential_range[card_one_spades, card_one_diamonds] = [1, .5]
-                    self.potential_range[card_one_clubs, card_one_hearts] = [1, .5]
-                    self.potential_range[card_one_clubs, card_one_diamonds] = [1, .5]
-                    self.potential_range[card_one_diamonds, card_one_hearts] = [1, .5]
+                    self.potential_range[card_one_spades, card_one_hearts] = [1, .5, .5]
+                    self.potential_range[card_one_spades, card_one_clubs] = [1, .5, .5]
+                    self.potential_range[card_one_spades, card_one_diamonds] = [1, .5, .5]
+                    self.potential_range[card_one_clubs, card_one_hearts] = [1, .5, .5]
+                    self.potential_range[card_one_clubs, card_one_diamonds] = [1, .5, .5]
+                    self.potential_range[card_one_diamonds, card_one_hearts] = [1, .5, .5]
         self.pre_flop_rank_range()
 
+    def visualize_range(self):
+        graph_list = [[.1,0],[.2,0],[.3,0],[.4,0],[.5,0],[.6,0],[.7,0],[.8,0],[.9,0],[1,0]]
+        for hand in self.potential_range:
+            if self.potential_range[hand][1] < graph_list[0][0]:
+                graph_list[0][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[1][0]:
+                graph_list[1][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[2][0]:
+                graph_list[2][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[3][0]:
+                graph_list[3][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[4][0]:
+                graph_list[4][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[5][0]:
+                graph_list[5][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[6][0]:
+                graph_list[6][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[7][0]:
+                graph_list[7][1] += self.potential_range[hand][0]
+            elif self.potential_range[hand][1] < graph_list[8][0]:
+                graph_list[8][1] += self.potential_range[hand][0]
+            else:
+                graph_list[9][1] += self.potential_range[hand][0]
+        print(graph_list)
+
     def update_action(self, action, raise_amount, pot_size):
-        if action == "Raise":
+        if action == "Raise" and raise_amount > 0:
             for hand in self.potential_range:
-                self.potential_range[hand][0] = self.potential_range[hand][0] * (1 - self.potential_range[hand][1]) * (1 + (raise_amount/pot_size))
+                self.potential_range[hand][0] = self.potential_range[hand][0] * pow((self.potential_range[hand][2] + .5),2)
+        elif action == "Call" and raise_amount > 0:
+            for hand in self.potential_range:
+                self.potential_range[hand][0] = self.potential_range[hand][0] * pow((self.potential_range[hand][2] + .5),2)
         elif action == "Check":
             for hand in self.potential_range:
-                self.potential_range[hand][0] = self.potential_range[hand][0] * self.potential_range[hand][1]
-        elif action == "Call":
-            for hand in self.potential_range:
-                self.potential_range[hand][0] = self.potential_range[hand][0] * (1 - self.potential_range[hand][1]) * (1 + (raise_amount/pot_size))
-
+                self.potential_range[hand][0] = self.potential_range[hand][0] * (1.5 - self.potential_range[hand][2])
+        self.visualize_range()
 
     def calculate_pot_value(self, equity, pot_size, cost_size):
         if cost_size > 0:
