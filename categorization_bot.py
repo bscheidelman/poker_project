@@ -1,6 +1,8 @@
 from equity_calculator import calculate_equity_preflop, calculate_equity_flop, calculate_equity_turn, calculate_equity_river, calculate_equity_preflop_vs, calculate_equity_flop_vs, calculate_equity_turn_vs
 import itertools, random
 from bases import Card, Player, Board, best_hand, check_winner
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class categorization_bot:
@@ -131,6 +133,14 @@ class categorization_bot:
                 graph_list[8][1] += self.potential_range[hand][0]
             else:
                 graph_list[9][1] += self.potential_range[hand][0]
+
+
+        data = np.array(graph_list)
+        x,y = data.T
+        plt.scatter(x,y)
+        plt.xlabel("Equity")
+        plt.ylabel("Predicted Frequency")
+        plt.show()
         print(graph_list)
 
     def update_action(self, action, raise_amount, pot_size):
@@ -142,7 +152,7 @@ class categorization_bot:
                 self.potential_range[hand][0] = self.potential_range[hand][0] * pow((self.potential_range[hand][2] + .5),2)
         elif action == "Check":
             for hand in self.potential_range:
-                self.potential_range[hand][0] = self.potential_range[hand][0] * (1.5 - self.potential_range[hand][2])
+                self.potential_range[hand][0] = self.potential_range[hand][0] * pow((1.5 - self.potential_range[hand][2]),2)
         self.visualize_range()
 
     def calculate_pot_value(self, equity, pot_size, cost_size):
@@ -168,8 +178,8 @@ class categorization_bot:
             count += self.potential_range[hand][0]
 
         avg_equity = total/count
-        raise_percent = 100 * (avg_equity*avg_equity)
+        raise_percent = 100 * pow(avg_equity,3)
 
-        if raise_percent < random.randint(1,73):
+        if raise_percent > random.randint(1,61):
             return .5 * pot_size
         return 0
