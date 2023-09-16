@@ -10,7 +10,7 @@ This GitHub project is a comprehensive implementation of a Heads-Up Poker AI sys
 ### Categorization Bot: 
 This bot employs a categorization-based approach to evaluate poker hands and make decisions at different stages of the game (preflop, flop, turn, and river). It maintains a range of potential hands and adapts its strategy based on calculated equities and opponent actions. This bot currently beats the Intermediate Bot by an average of 4.78 BB per hand.
 ### Intermediate Bot: 
-An intermediate-level poker bot that uses equity calculations to make decisions. It adjusts its strategy according to the current pot size, cost to call, and the strength of its hand.
+An intermediate-level poker bot that uses equity calculations to create a variable decision based strategy. It adjusts its strategy according to the current pot size, cost to call, and the strength of its hand.
 ### Simple Bot: 
 A basic poker bot that follows a straightforward strategy. It evaluates its hand's equity and makes simple decisions based on predefined thresholds.
 ## Equity Calculator:
