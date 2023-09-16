@@ -11,7 +11,6 @@ class categorization_bot:
         self.c2 = c2
         self.potential_range = {}
 
-
     def update_board_preflop(self):
         for hand in list(self.potential_range):
             if (hand[0].value == self.c1.value and hand[0].suit == self.c1.suit) or (hand[1].value == self.c1.value and hand[1].suit == self.c1.suit) or (hand[0].value == self.c2.value and hand[0].suit == self.c2.suit) or (hand[1].value == self.c2.value and hand[1].suit == self.c2.suit):
@@ -24,8 +23,6 @@ class categorization_bot:
         for hand in list(self.potential_range):
             if (hand[0].value == self.b1.value and hand[0].suit == self.b1.suit) or (hand[0].value == self.b2.value and hand[0].suit == self.b2.suit) or (hand[0].value == self.b3.value and hand[0].suit == self.b3.suit) or (hand[1].value == self.b1.value and hand[1].suit == self.b1.suit) or (hand[1].value == self.b2.value and hand[1].suit == self.b2.suit) or (hand[1].value == self.b3.value and hand[1].suit == self.b3.suit):
                 del self.potential_range[hand]
-
-
 
     def update_board_turn(self, b4):
         self.b4 = b4
@@ -111,37 +108,26 @@ class categorization_bot:
         self.pre_flop_rank_range()
 
     def visualize_range(self):
-        graph_list = [[.1,0],[.2,0],[.3,0],[.4,0],[.5,0],[.6,0],[.7,0],[.8,0],[.9,0],[1,0]]
-        for hand in self.potential_range:
-            if self.potential_range[hand][1] < graph_list[0][0]:
-                graph_list[0][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[1][0]:
-                graph_list[1][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[2][0]:
-                graph_list[2][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[3][0]:
-                graph_list[3][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[4][0]:
-                graph_list[4][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[5][0]:
-                graph_list[5][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[6][0]:
-                graph_list[6][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[7][0]:
-                graph_list[7][1] += self.potential_range[hand][0]
-            elif self.potential_range[hand][1] < graph_list[8][0]:
-                graph_list[8][1] += self.potential_range[hand][0]
-            else:
-                graph_list[9][1] += self.potential_range[hand][0]
+        equity_values = [self.potential_range[hand][1] for hand in self.potential_range]
+        weights = [self.potential_range[hand][0] for hand in self.potential_range]
+        num_bins = 10
+        equity_range = (0, 1)
+        bin_edges = np.linspace(equity_range[0], equity_range[1], num_bins + 1)
+        bin_widths = [bin_edges[i + 1] - bin_edges[i] for i in range(num_bins)]
+        bin_counts = np.zeros(num_bins)
+        for equity, weight in zip(equity_values, weights):
+            if equity < equity_range[0] or equity > equity_range[1]:
+                continue
+            bin_index = int((equity - equity_range[0]) / (equity_range[1] - equity_range[0]) * num_bins)
+            bin_counts[bin_index] += weight
+        plt.bar(bin_edges[:-1], bin_counts, width=bin_widths, edgecolor='k', alpha=0.7)
 
-
-        data = np.array(graph_list)
-        x,y = data.T
-        plt.scatter(x,y)
-        plt.xlabel("Equity")
-        plt.ylabel("Predicted Frequency")
+        plt.xlabel("Equity Bins")
+        plt.ylabel("Likelihood (Based on Weight)")
+        plt.title("Equity Distribution Based on Weight")
         plt.show()
-        print(graph_list)
+
+        
 
     def update_action(self, action, raise_amount, pot_size):
         if action == "Raise" and raise_amount > 0:
@@ -149,7 +135,7 @@ class categorization_bot:
                 self.potential_range[hand][0] = self.potential_range[hand][0] * pow((self.potential_range[hand][2] + .5),2)
         elif action == "Call" and raise_amount > 0:
             for hand in self.potential_range:
-                self.potential_range[hand][0] = self.potential_range[hand][0] * pow((self.potential_range[hand][2] + .5),2)
+                self.potential_range[hand][0] = self.potential_range[hand][0] * pow(1.5 - abs(.5-self.potential_range[hand][2]),2)
         elif action == "Check":
             for hand in self.potential_range:
                 self.potential_range[hand][0] = self.potential_range[hand][0] * pow((1.5 - self.potential_range[hand][2]),2)
@@ -171,7 +157,6 @@ class categorization_bot:
                 return -1
             pot_size = pot_size + raise_amount
 
-
         total = count = 0
         for hand in self.potential_range:
             total += self.potential_range[hand][0] * self.potential_range[hand][1]
@@ -179,6 +164,7 @@ class categorization_bot:
 
         avg_equity = total/count
         raise_percent = 100 * pow(avg_equity,3)
+        print("Raise percent:", raise_percent/61)
 
         if raise_percent > random.randint(1,61):
             return .5 * pot_size
