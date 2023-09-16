@@ -20,7 +20,3 @@ The performance calculator tool allows you to evaluate how these poker bots perf
 ## Upcoming Features for Categorization Bot:
 ### Dynamic Bet Sizing: 
 The bot will dynamically adjust its bet sizing based on the board texture. Expect larger bets on wet (highly coordinated) boards and smaller bets on dry (lowly coordinated) boards for improved strategic play.
-### Range Adjustment: 
-The bot will intelligently remove hands from its potential range that include cards in it's hand, enhancing its decision-making process by considering your opponent's possible holdings.
-### Live Range Display: 
-Get real-time insights into the predicted possibility of each hand in the bot's range. This feature will help you understand the bot's thought process and adapt your own strategy accordingly.
