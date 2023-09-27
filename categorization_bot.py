@@ -112,16 +112,15 @@ class categorization_bot:
         weights = [self.potential_range[hand][0] for hand in self.potential_range]
         num_bins = 10
         equity_range = (0, 1)
-        bin_edges = np.linspace(equity_range[0], equity_range[1], num_bins + 1)
-        bin_widths = [bin_edges[i + 1] - bin_edges[i] for i in range(num_bins)]
-        bin_counts = np.zeros(num_bins)
+        bin_edges = np.linspace(equity_range[0], equity_range[1], num_bins + 2)
+        bin_widths = [bin_edges[i + 1] - bin_edges[i] for i in range(num_bins + 1)]
+        bin_counts = np.zeros(num_bins+1)
         for equity, weight in zip(equity_values, weights):
             if equity < equity_range[0] or equity > equity_range[1]:
                 continue
             bin_index = int((equity - equity_range[0]) / (equity_range[1] - equity_range[0]) * num_bins)
             bin_counts[bin_index] += weight
         plt.bar(bin_edges[:-1], bin_counts, width=bin_widths, edgecolor='k', alpha=0.7)
-
         plt.xlabel("Equity Bins")
         plt.ylabel("Likelihood (Based on Weight)")
         plt.title("Equity Distribution Based on Weight")
